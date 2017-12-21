@@ -1,0 +1,29 @@
+{
+    // package name
+    "name": "alotacents/yii2-pagestate",
+
+    // package type
+    "type": "yii2-extension",
+
+    "description": "PageState for the Yii framework",
+    "keywords": ["yii2", "pagestate", "helper"],
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Jensen Thomassen",
+            "email": "alotacents@gmail.com"
+        }
+    ],
+
+    // package dependencies
+    "require": {
+        "yiisoft/yii2": "~2.0.0",
+    },
+
+    // class autoloading specs
+    "autoload": {
+        "psr-4": {
+            "alotacents\\pagestate\\": "src"
+        }
+    }
+}
