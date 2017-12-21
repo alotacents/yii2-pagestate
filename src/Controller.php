@@ -78,7 +78,7 @@ class Controller extends Controller
 */
 
         if(is_array($value)){
-            $config = ['class'=>\common\components\HiddenFieldPageStatePersister::className()];
+            $config = ['class'=>HiddenFieldPageStatePersister::className()];
             if(($id = $this::className()) !== null){
                 $config['clientStateIdentifier'] = $id;
             }
