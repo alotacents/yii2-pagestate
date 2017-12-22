@@ -13,10 +13,13 @@ to change persister and config override controller init function
 
       $this->enablePageSate = true; // if false pagestate will not be saved
       $this->pageStatePersister = [
-        'class' => \alotacents\pagestate\HiddenFieldPageStatePersister,
-        'userKey' => $session->id, //Key used for encryption it's mixed with clientStateIdentifier
-        'clientStateIdentifier' => 'Namespace\Class', //Default is the current controller classname. Can be set to false for don't use
-        'clientStateLength' => -1, // Used to chunk the ClientState field into multiple of specified size 0, and -1 mean no chunking
+        'class' => \alotacents\pagestate\HiddenFieldPageStatePersister, //Default can be omitted
+        'userKey' => $session->id, 
+        //Key used for encryption it's mixed with clientStateIdentifier. Can be set to false for don't use
+        'clientStateIdentifier' => 'Namespace\Class', 
+        //Default is the current controller classname. Can be set to false for don't use
+        'clientStateLength' => -1, 
+        // Used to chunk the ClientState field into multiple of specified size 0, and -1 mean no chunking
       ];
     }
 
