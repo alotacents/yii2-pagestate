@@ -32,7 +32,7 @@ in a action you'll have a pagestate property recommend using php reference
         $pagestate['Counter'] = 0
       }
 
-      $pagestate['Counter'] = $pagestate['Counter']++;
+      $pagestate['Counter']++;
 
       return $this->render('view', ['count'=>$pagestate['counter']);
     }
