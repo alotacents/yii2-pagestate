@@ -12,10 +12,10 @@ use Yii;
 use yii\base\Component;
 use yii\base\Exception;
 use yii\di\Instance;
-use yii\web\Controller;
+use alotacents\pagestate\behaviors\PageStateBehavior;
 
 
-class Controller extends Controller
+class Controller extends \yii\web\Controller
 {
     private $_persister;
 
@@ -33,8 +33,8 @@ class Controller extends Controller
         Yii::$app->on(\yii\base\Application::EVENT_AFTER_REQUEST, [$this, 'saveState']);
     }
 
-    public function registerComponentState(Component $component) {
-        if ($component == null) {
+    public function registerComponentState(PageStateBehavior $behavior) {
+        if ($behavior == null) {
             throw new \Exception('Component can not be null');
         }
         /*
@@ -42,20 +42,24 @@ class Controller extends Controller
             throw new InvalidOperationException(SR.GetString(SR.Page_MustCallBeforeAndDuringPreRender, "RegisterRequiresControlState"));
         }
         */
+
         if ($this->_registeredComponents == null) {
             $this->_registeredComponents = [];
         }
 
+        $component = $behavior->owner;
         // Don't do anything if RegisterRequiresControlState is called multiple times on the same control.
         if (!in_array($component, $this->_registeredComponents, true)) {
             $this->_registeredComponents[] = $component;
 
             $componentStates = $this->getPageStatePersister()->getComponentState();
             if ($componentStates != null) {
-                $uniqueID = $component->getId();
+                $uniqueID = $component->id;
 
                 $state = isset($componentStates[$uniqueID]) ? $componentStates[$uniqueID] : null;
-                $component->loadComponentStateInternal($state);
+
+                //throw new \Exception(var_export($component->behaviors,true));
+                $behavior->loadComponentStateInternal($state);
             }
         }
     }
@@ -98,8 +102,8 @@ class Controller extends Controller
 
         $statePair = $this->loadPageStateFromPersistenceMedium();
 
-        $controlStates = isset($statePair[0]) ? $statePair[0] : null;
-        if ($controlStates != null) {
+        $componentStates = isset($statePair[0]) ? $statePair[0] : null;
+        if ($componentStates != null) {
             //$this->_controlsRequiringPostBack = (ArrayList)controlStates[PageRegisteredControlsThatRequirePostBackKey];
 
             if ($this->_registeredComponents != null) {
@@ -159,16 +163,16 @@ class Controller extends Controller
 
         Yii::$app->off(\yii\base\Application::EVENT_AFTER_REQUEST, [$this, 'saveState']);
 
-        $controlStates = null;
+        $componentStates = null;
 
         if($this->_registeredComponents !== null){
             foreach ($this->_registeredComponents as $component) {
 
                 $uniqueID = $component->id;
-                $state = $component->saveControlStateInternal();
+                $state = $component->saveComponentStateInternal();
 
-                if(!isset($controlStates[$uniqueID]) && $state !== null){
-                    $controlStates[$uniqueID] = $state;
+                if(!isset($componentStates[$uniqueID]) && $state !== null){
+                    $componentStates[$uniqueID] = $state;
                 }
             }
         }
@@ -178,7 +182,7 @@ class Controller extends Controller
             $pageStates = $this->pageState;
         }
 
-        $statePair = [$controlStates, $pageStates];
+        $statePair = [$componentStates, $pageStates];
 
         $this->savePageStateToPersistenceMedium($statePair);
 
